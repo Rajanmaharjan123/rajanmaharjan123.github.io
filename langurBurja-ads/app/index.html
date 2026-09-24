@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Langur Burja – The Classic Nepali Dice Game in 3D</title>
+  <meta name="description" content="Roll the dice and feel the thrill of Langur Burja (Jhandi Munda) – the classic Nepali dice game reimagined in stunning 3D with realistic motion, sound and physics. Free on iPhone and iPad." />
+  <meta property="og:title" content="Langur Burja – Classic Nepali Dice Game in 3D" />
+  <meta property="og:description" content="Shake or swipe to roll. Realistic 3D dice, sound and physics. Free on the App Store." />
+  <meta property="og:image" content="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/54/94/14/549414cc-cae4-496e-ed7b-3afa36908c9e/AppIcon-0-0-1x_U007emarketing-0-11-0-85-220.png/512x512bb.jpg" />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#0b1026" />
+  <meta name="apple-itunes-app" content="app-id=6737496280" />
+  <link rel="icon" href="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/54/94/14/549414cc-cae4-496e-ed7b-3afa36908c9e/AppIcon-0-0-1x_U007emarketing-0-11-0-85-220.png/128x128bb.jpg" />
+  <link rel="apple-touch-icon" href="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/54/94/14/549414cc-cae4-496e-ed7b-3afa36908c9e/AppIcon-0-0-1x_U007emarketing-0-11-0-85-220.png/180x180bb.jpg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0b1026;
+      --bg-2: #121a3a;
+      --card: rgba(255, 255, 255, 0.05);
+      --border: rgba(255, 255, 255, 0.1);
+      --text: #eef1ff;
+      --muted: #a6adcf;
+      --crimson: #e2294f;
+      --blue: #2f5bff;
+      --gold: #ffc53d;
+      --radius: 20px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        radial-gradient(60vw 60vw at 85% -10%, rgba(226, 41, 79, 0.28), transparent 60%),
+        radial-gradient(55vw 55vw at -10% 30%, rgba(47, 91, 255, 0.25), transparent 60%),
+        radial-gradient(40vw 40vw at 50% 110%, rgba(255, 197, 61, 0.12), transparent 60%);
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    h1, h2, h3 {
+      font-family: 'Baloo 2', 'Inter', sans-serif;
+      line-height: 1.1;
+      margin: 0;
+    }
+
+    .container {
+      width: min(1120px, 100% - 2.5rem);
+      margin-inline: auto;
+    }
+
+    /* ---------- Nav ---------- */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      background: rgba(11, 16, 38, 0.7);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 68px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      font-family: 'Baloo 2', sans-serif;
+      font-weight: 800;
+      font-size: 1.35rem;
+    }
+
+    .brand img {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      font-weight: 500;
+      color: var(--muted);
+    }
+
+    .nav-links a:hover { color: var(--text); }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.7rem 1.4rem;
+      border-radius: 999px;
+      font-weight: 600;
+      background: linear-gradient(135deg, var(--crimson), #ff5a7a);
+      color: #fff;
+      box-shadow: 0 8px 24px rgba(226, 41, 79, 0.35);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(226, 41, 79, 0.5);
+    }
+
+    /* ---------- Hero ---------- */
+    .hero {
+      padding: 5rem 0 4rem;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      align-items: center;
+      gap: 3rem;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.9rem;
+      border-radius: 999px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      font-size: 0.85rem;
+      color: var(--gold);
+      font-weight: 600;
+      margin-bottom: 1.4rem;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.8rem, 6vw, 4.6rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .gradient-text {
+      background: linear-gradient(90deg, var(--gold), #ff7a59, var(--crimson));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero p.lead {
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 34rem;
+      margin: 1.4rem 0 2rem;
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .store-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.7rem;
+      height: 58px;
+      padding: 0 1.4rem 0 1.1rem;
+      border-radius: 14px;
+      background: #000;
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .store-badge:hover {
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+    }
+
+    .store-badge svg { width: 30px; height: 30px; fill: currentColor; }
+
+    .store-badge span {
+      display: flex;
+      flex-direction: column;
+      font-size: 1.35rem;
+      font-weight: 600;
+      line-height: 1.05;
+      letter-spacing: -0.01em;
+      text-align: left;
+    }
+
+    .store-badge small { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.02em; }
+
+    .rating {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .stars { color: var(--gold); letter-spacing: 2px; font-size: 1.1rem; }
+
+    /* ---------- 3D Dice ---------- */
+    .dice-stage {
+      position: relative;
+      height: 420px;
+      display: grid;
+      place-items: center;
+      perspective: 900px;
+    }
+
+    .dice-stage::after {
+      content: "";
+      position: absolute;
+      bottom: 40px;
+      width: 220px;
+      height: 30px;
+      border-radius: 50%;
+      background: radial-gradient(rgba(0, 0, 0, 0.55), transparent 70%);
+      animation: shadow 4s ease-in-out infinite;
+    }
+
+    .cube {
+      --size: 170px;
+      width: var(--size);
+      height: var(--size);
+      position: relative;
+      transform-style: preserve-3d;
+      animation: roll 9s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite, float 4s ease-in-out infinite;
+      cursor: pointer;
+    }
+
+    .cube.small {
+      --size: 80px;
+      position: absolute;
+      animation-duration: 7s, 5s;
+    }
+
+    .cube.small.one { top: 30px; right: 20px; animation-delay: -2s, -1s; }
+    .cube.small.two { bottom: 70px; left: 10px; animation-delay: -4s, -2s; animation-direction: reverse, normal; }
+
+    .face {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      border-radius: 22%;
+      background: linear-gradient(145deg, #ffffff, #e4e7f2);
+      box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.05), inset 0 -10px 24px rgba(0, 0, 0, 0.08);
+      font-size: calc(var(--size) * 0.5);
+      backface-visibility: hidden;
+    }
+
+    .face.red { color: var(--crimson); }
+    .face.dark { color: #1b1f3b; }
+    .face.gold { color: #d99a00; }
+
+    .f1 { transform: rotateY(0deg) translateZ(calc(var(--size) / 2)); }
+    .f2 { transform: rotateY(90deg) translateZ(calc(var(--size) / 2)); }
+    .f3 { transform: rotateY(180deg) translateZ(calc(var(--size) / 2)); }
+    .f4 { transform: rotateY(-90deg) translateZ(calc(var(--size) / 2)); }
+    .f5 { transform: rotateX(90deg) translateZ(calc(var(--size) / 2)); }
+    .f6 { transform: rotateX(-90deg) translateZ(calc(var(--size) / 2)); }
+
+    @keyframes roll {
+      0%   { transform: rotateX(-20deg) rotateY(30deg); }
+      25%  { transform: rotateX(160deg) rotateY(120deg); }
+      50%  { transform: rotateX(250deg) rotateY(300deg); }
+      75%  { transform: rotateX(380deg) rotateY(390deg); }
+      100% { transform: rotateX(340deg) rotateY(390deg); }
+    }
+
+    @keyframes float {
+      0%, 100% { translate: 0 0; }
+      50% { translate: 0 -18px; }
+    }
+
+    @keyframes shadow {
+      0%, 100% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(0.8); opacity: 0.5; }
+    }
+
+    /* ---------- Stats ---------- */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .stat {
+      text-align: center;
+      padding: 1.4rem 1rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+
+    .stat strong {
+      display: block;
+      font-family: 'Baloo 2', sans-serif;
+      font-size: 2rem;
+      line-height: 1.1;
+    }
+
+    .stat span { color: var(--muted); font-size: 0.9rem; }
+
+    /* ---------- Sections ---------- */
+    section { padding: 5rem 0; }
+
+    .section-head {
+      text-align: center;
+      max-width: 40rem;
+      margin: 0 auto 3rem;
+    }
+
+    .section-head h2 {
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      font-weight: 800;
+    }
+
+    .section-head p { color: var(--muted); margin-top: 0.8rem; }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+    }
+
+    .feature {
+      padding: 1.8rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+    }
+
+    .feature:hover {
+      transform: translateY(-6px);
+      border-color: rgba(255, 197, 61, 0.4);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .feature .icon {
+      width: 52px;
+      height: 52px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      margin-bottom: 1.1rem;
+      background: linear-gradient(135deg, var(--blue), #6b8cff);
+    }
+
+    .feature:nth-child(3n+2) .icon { background: linear-gradient(135deg, var(--crimson), #ff6f8e); }
+    .feature:nth-child(3n) .icon { background: linear-gradient(135deg, #e6a100, var(--gold)); }
+
+    .feature .icon svg { width: 26px; height: 26px; stroke: #fff; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    .feature h3 { font-size: 1.3rem; margin-bottom: 0.4rem; }
+    .feature p { color: var(--muted); margin: 0; font-size: 0.97rem; }
+
+    /* ---------- Screenshots ---------- */
+    .shots {
+      display: flex;
+      gap: 1.5rem;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      padding: 1rem 0 1.5rem;
+      scrollbar-width: none;
+      justify-content: center;
+    }
+
+    .shots::-webkit-scrollbar { display: none; }
+
+    .shot {
+      flex: 0 0 auto;
+      width: 240px;
+      scroll-snap-align: center;
+      border-radius: 28px;
+      padding: 8px;
+      background: linear-gradient(160deg, #2a3366, #151b3d);
+      border: 1px solid var(--border);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+      transition: transform 0.3s ease;
+    }
+
+    .shot:nth-child(even) { transform: translateY(24px); }
+    .shot:hover { transform: translateY(-8px) rotate(-1deg); }
+
+    .shot img {
+      display: block;
+      width: 100%;
+      border-radius: 22px;
+    }
+
+    /* ---------- Symbols ---------- */
+    .symbols {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 1rem;
+    }
+
+    .symbol {
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      align-content: center;
+      gap: 0.3rem;
+      border-radius: var(--radius);
+      background: linear-gradient(145deg, #ffffff, #e4e7f2);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+      transition: transform 0.3s ease;
+    }
+
+    .symbol:hover { transform: rotate(-8deg) scale(1.06); }
+
+    .symbol b { font-size: clamp(2rem, 5vw, 3.2rem); line-height: 1; }
+    .symbol small { color: #4a5078; font-weight: 600; font-size: 0.85rem; }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      margin-top: 2.5rem;
+      counter-reset: step;
+    }
+
+    .step {
+      padding: 1.6rem;
+      border-radius: var(--radius);
+      background: var(--card);
+      border: 1px solid var(--border);
+    }
+
+    .step::before {
+      counter-increment: step;
+      content: counter(step);
+      display: grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      margin-bottom: 0.9rem;
+      font-family: 'Baloo 2', sans-serif;
+      font-weight: 800;
+      color: var(--bg);
+      background: var(--gold);
+    }
+
+    .step h3 { font-size: 1.2rem; margin-bottom: 0.3rem; }
+    .step p { margin: 0; color: var(--muted); font-size: 0.95rem; }
+
+    /* ---------- Reviews ---------- */
+    .reviews {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.25rem;
+      max-width: 820px;
+      margin-inline: auto;
+    }
+
+    .review {
+      padding: 1.8rem;
+      border-radius: var(--radius);
+      background: var(--card);
+      border: 1px solid var(--border);
+    }
+
+    .review h3 { font-size: 1.25rem; margin: 0.5rem 0; }
+    .review p { margin: 0 0 1rem; color: var(--muted); }
+    .review cite { font-style: normal; font-weight: 600; font-size: 0.9rem; }
+
+    /* ---------- CTA ---------- */
+    .cta {
+      text-align: center;
+      padding: 4rem 2rem;
+      border-radius: 32px;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255, 197, 61, 0.25), transparent 50%),
+        linear-gradient(135deg, var(--crimson), #7a1fd6 60%, var(--blue));
+      box-shadow: 0 30px 80px rgba(226, 41, 79, 0.3);
+    }
+
+    .cta img.app-icon {
+      width: 96px;
+      height: 96px;
+      border-radius: 22px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+      margin-bottom: 1.2rem;
+    }
+
+    .cta h2 { font-size: clamp(2rem, 4.5vw, 3rem); font-weight: 800; }
+    .cta p { opacity: 0.9; margin: 0.8rem auto 2rem; max-width: 32rem; }
+
+    /* ---------- Footer ---------- */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .footer-inner {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .footer-links { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+    .footer-links a:hover { color: var(--text); }
+
+    /* ---------- Reveal ---------- */
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 900px) {
+      .hero { padding-top: 3rem; }
+      .hero-grid { grid-template-columns: 1fr; text-align: center; }
+      .hero p.lead { margin-inline: auto; }
+      .cta-row { justify-content: center; }
+      .dice-stage { height: 320px; order: -1; }
+      .features, .steps { grid-template-columns: 1fr 1fr; }
+      .symbols { grid-template-columns: repeat(3, 1fr); }
+      .shots { justify-content: flex-start; }
+      .nav-links { display: none; }
+    }
+
+    @media (max-width: 600px) {
+      .features, .steps, .reviews { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .shot { width: 200px; }
+      .cube { --size: 130px; }
+      .footer-inner { flex-direction: column; text-align: center; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .reveal { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container nav-inner">
+      <a href="#" class="brand">
+        <img src="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/54/94/14/549414cc-cae4-496e-ed7b-3afa36908c9e/AppIcon-0-0-1x_U007emarketing-0-11-0-85-220.png/128x128bb.jpg" alt="Langur Burja app icon" />
+        Langur Burja
+      </a>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#screens">Screenshots</a>
+        <a href="#how">How to Play</a>
+        <a href="#reviews">Reviews</a>
+      </div>
+      <a class="btn" href="https://apps.apple.com/np/app/langurburja/id6737496280" target="_blank" rel="noopener">Get the App</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container hero-grid">
+      <div>
+        <span class="eyebrow">&#9733; Free on iPhone &amp; iPad</span>
+        <h1>Roll the dice.<br /><span class="gradient-text">Feel the thrill.</span></h1>
+        <p class="lead">
+          The classic Nepali dice game <strong>Langur Burja</strong> (Jhandi Munda), reimagined in stunning 3D
+          with realistic motion, sound and physics. Just shake or swipe to play.
+        </p>
+        <div class="cta-row">
+          <a class="store-badge" href="https://apps.apple.com/np/app/langurburja/id6737496280" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.37 12.62c-.02-2.33 1.9-3.45 1.99-3.5-1.08-1.59-2.77-1.8-3.37-1.83-1.43-.15-2.8.84-3.52.84-.73 0-1.85-.82-3.04-.8-1.56.02-3 .91-3.8 2.31-1.62 2.81-.41 6.97 1.17 9.25.77 1.12 1.69 2.37 2.9 2.33 1.16-.05 1.6-.75 3.01-.75 1.4 0 1.8.75 3.03.73 1.25-.02 2.04-1.14 2.8-2.26.88-1.3 1.25-2.55 1.27-2.62-.03-.01-2.43-.93-2.44-3.7zM14.06 5.77c.64-.78 1.07-1.85.95-2.93-.92.04-2.04.61-2.7 1.39-.59.69-1.11 1.79-.97 2.85 1.03.08 2.07-.52 2.72-1.31z"/></svg>
+            <span><small>Download on the</small>App Store</span>
+          </a>
+          <div class="rating">
+            <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+            <span><strong>5.0</strong> on the App Store</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="dice-stage" aria-hidden="true">
+        <div class="cube" id="mainDice">
+          <div class="face f1 red">&hearts;</div>
+          <div class="face f2 dark">&spades;</div>
+          <div class="face f3 red">&diams;</div>
+          <div class="face f4 dark">&clubs;</div>
+          <div class="face f5 gold">&#9819;</div>
+          <div class="face f6 red">&#9873;</div>
+        </div>
+        <div class="cube small one">
+          <div class="face f1 dark">&spades;</div>
+          <div class="face f2 red">&hearts;</div>
+          <div class="face f3 gold">&#9819;</div>
+          <div class="face f4 red">&diams;</div>
+          <div class="face f5 red">&#9873;</div>
+          <div class="face f6 dark">&clubs;</div>
+        </div>
+        <div class="cube small two">
+          <div class="face f1 gold">&#9819;</div>
+          <div class="face f2 dark">&clubs;</div>
+          <div class="face f3 red">&#9873;</div>
+          <div class="face f4 red">&hearts;</div>
+          <div class="face f5 dark">&spades;</div>
+          <div class="face f6 red">&diams;</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container stats reveal">
+      <div class="stat"><strong>5.0&#9733;</strong><span>App Store rating</span></div>
+      <div class="stat"><strong>Free</strong><span>No purchase needed</span></div>
+      <div class="stat"><strong>4+</strong><span>Fun for all ages</span></div>
+      <div class="stat"><strong>0</strong><span>Data collected</span></div>
+    </div>
+  </header>
+
+  <section id="features">
+    <div class="container">
+      <div class="section-head reveal">
+        <h2>Why players <span class="gradient-text">love it</span></h2>
+        <p>Everything you love about the festival favourite, right at your fingertips.</p>
+      </div>
+
+      <div class="features">
+        <div class="feature reveal">
+          <div class="icon"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.3 7 12 12l8.7-5M12 22V12"/></svg></div>
+          <h3>Stunning 3D Dice</h3>
+          <p>Beautifully rendered dice with realistic lighting that feel like the real thing.</p>
+        </div>
+        <div class="feature reveal">
+          <div class="icon"><svg viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M3 8v8M21 8v8"/></svg></div>
+          <h3>Shake or Swipe</h3>
+          <p>Shake your phone or swipe the screen to roll. Simple, natural and satisfying.</p>
+        </div>
+        <div class="feature reveal">
+          <div class="icon"><svg viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+          <h3>Real Physics</h3>
+          <p>Every roll tumbles, bounces and settles with true-to-life motion.</p>
+        </div>
+        <div class="feature reveal">
+          <div class="icon"><svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></svg></div>
+          <h3>Immersive Sound</h3>
+          <p>Crisp dice sounds bring the festival atmosphere home. Toggle anytime.</p>
+        </div>
+        <div class="feature reveal">
+          <div class="icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+          <h3>Play Solo or with Friends</h3>
+          <p>Enjoy quick rounds alone or gather everyone around for Dashain and Tihar fun.</p>
+        </div>
+        <div class="feature reveal">
+          <div class="icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <h3>Private by Design</h3>
+          <p>No sign-up and no data collected. Just open the app and start rolling.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="screens">
+    <div class="container">
+      <div class="section-head reveal">
+        <h2>See it in <span class="gradient-text">action</span></h2>
+        <p>A glimpse of the 3D experience players can't stop talking about.</p>
+      </div>
+    </div>
+    <div class="shots reveal">
+      <div class="shot"><img loading="lazy" src="https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/9f/86/c0/9f86c0d8-725f-a562-dd08-48e651457440/01.png/600x900bb.jpg" alt="Langur Burja screenshot 1" /></div>
+      <div class="shot"><img loading="lazy" src="https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/21/f6/74/21f6748f-8f2f-297e-a3e7-2091fef62e14/02.png/600x900bb.jpg" alt="Langur Burja screenshot 2" /></div>
+      <div class="shot"><img loading="lazy" src="https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/b1/da/6d/b1da6d89-9987-a8dc-24ae-31c3eb0b1229/03.png/600x900bb.jpg" alt="Langur Burja screenshot 3" /></div>
+      <div class="shot"><img loading="lazy" src="https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/32/c7/f7/32c7f7d0-11f2-2c79-c138-612980741b3e/04.png/600x900bb.jpg" alt="Langur Burja screenshot 4" /></div>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="container">
+      <div class="section-head reveal">
+        <h2>Six symbols. <span class="gradient-text">Endless fun.</span></h2>
+        <p>Every die carries the same six classic symbols. Pick yours and let luck decide.</p>
+      </div>
+
+      <div class="symbols reveal">
+        <div class="symbol"><b style="color: var(--crimson)">&hearts;</b><small>Heart</small></div>
+        <div class="symbol"><b style="color: #1b1f3b">&spades;</b><small>Spade</small></div>
+        <div class="symbol"><b style="color: var(--crimson)">&diams;</b><small>Diamond</small></div>
+        <div class="symbol"><b style="color: #1b1f3b">&clubs;</b><small>Club</small></div>
+        <div class="symbol"><b style="color: #d99a00">&#9819;</b><small>Crown</small></div>
+        <div class="symbol"><b style="color: var(--crimson)">&#9873;</b><small>Flag</small></div>
+      </div>
+
+      <div class="steps">
+        <div class="step reveal">
+          <h3>Pick a symbol</h3>
+          <p>Choose the symbol you think will land face up the most.</p>
+        </div>
+        <div class="step reveal">
+          <h3>Shake or swipe</h3>
+          <p>Shake your device or swipe to send six 3D dice tumbling.</p>
+        </div>
+        <div class="step reveal">
+          <h3>Count your luck</h3>
+          <p>The more dice that show your symbol, the bigger your win.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="reviews">
+    <div class="container">
+      <div class="section-head reveal">
+        <h2>Loved by <span class="gradient-text">players</span></h2>
+        <p>Rated 5.0 out of 5 on the App Store.</p>
+      </div>
+
+      <div class="reviews">
+        <div class="review reveal">
+          <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+          <h3>3D Experience</h3>
+          <p>&ldquo;The 3D experience this app provides really makes this app stand out.&rdquo;</p>
+          <cite>phurba831</cite>
+        </div>
+        <div class="review reveal">
+          <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+          <h3>Nice app</h3>
+          <p>&ldquo;Nice langurburja game, 3D experience.&rdquo;</p>
+          <cite>ClumsyHuman</cite>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="cta reveal">
+        <img class="app-icon" src="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/54/94/14/549414cc-cae4-496e-ed7b-3afa36908c9e/AppIcon-0-0-1x_U007emarketing-0-11-0-85-220.png/256x256bb.jpg" alt="Langur Burja app icon" />
+        <h2>Ready to roll?</h2>
+        <p>Download Langur Burja for free and bring the festival spirit wherever you go.</p>
+        <a class="store-badge" href="https://apps.apple.com/np/app/langurburja/id6737496280" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.37 12.62c-.02-2.33 1.9-3.45 1.99-3.5-1.08-1.59-2.77-1.8-3.37-1.83-1.43-.15-2.8.84-3.52.84-.73 0-1.85-.82-3.04-.8-1.56.02-3 .91-3.8 2.31-1.62 2.81-.41 6.97 1.17 9.25.77 1.12 1.69 2.37 2.9 2.33 1.16-.05 1.6-.75 3.01-.75 1.4 0 1.8.75 3.03.73 1.25-.02 2.04-1.14 2.8-2.26.88-1.3 1.25-2.55 1.27-2.62-.03-.01-2.43-.93-2.44-3.7zM14.06 5.77c.64-.78 1.07-1.85.95-2.93-.92.04-2.04.61-2.7 1.39-.59.69-1.11 1.79-.97 2.85 1.03.08 2.07-.52 2.72-1.31z"/></svg>
+            <span><small>Download on the</small>App Store</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container footer-inner">
+      <span>&copy; <span id="year">2026</span> Burja Tech. All rights reserved.</span>
+      <div class="footer-links">
+        <a href="https://apps.apple.com/np/app/langurburja/id6737496280" target="_blank" rel="noopener">App Store</a>
+        <a href="https://apps.apple.com/np/app/langurburja/id6737496280#privacy" target="_blank" rel="noopener">Privacy</a>
+        <a href="/app-ads.txt">app-ads.txt</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+
+    const dice = document.getElementById('mainDice');
+    dice.addEventListener('click', () => {
+      dice.style.animation = 'none';
+      const x = 360 * (2 + Math.floor(Math.random() * 3)) + [0, 90, 180, 270][Math.floor(Math.random() * 4)];
+      const y = 360 * (2 + Math.floor(Math.random() * 3)) + [0, 90, 180, 270][Math.floor(Math.random() * 4)];
+      dice.animate(
+        [{ transform: 'rotateX(0deg) rotateY(0deg)' }, { transform: `rotateX(${x}deg) rotateY(${y}deg)` }],
+        { duration: 1400, easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)', fill: 'forwards' }
+      );
+    });
+  </script>
+</body>
+</html>
